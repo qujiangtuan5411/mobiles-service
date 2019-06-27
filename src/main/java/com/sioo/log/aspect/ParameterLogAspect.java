@@ -42,6 +42,7 @@ public class ParameterLogAspect {
     /**
      * 线程池
      */
+    @SuppressWarnings("all")
     private final ExecutorService fixedThreadPool = Executors
             .newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1);
 
