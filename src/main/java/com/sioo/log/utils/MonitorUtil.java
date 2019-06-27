@@ -19,10 +19,10 @@ public class MonitorUtil {
     
     /** 
     * @Description: 初始化jvm信息 
-    * @Param:  
+    * @Param:
     * @return:  
     * @Author: fanghuaiming
-    * @Date: 6:44 PM 2019/6/27
+    * @Date: 6:55 PM 2019/6/27
     */
     public static JvmInfo initJvmInfo(Boolean isOpen, String critical) {
         JvmInfo jvmInfo = new JvmInfo();

@@ -28,6 +28,9 @@ import java.util.concurrent.Executors;
 @Component
 public class JvmMonitorAspect {
 
+    /**
+     * 日志对象
+     */
     private static final Logger logger = LoggerFactory.getLogger(JvmMonitorAspect.class);
 
     /**
