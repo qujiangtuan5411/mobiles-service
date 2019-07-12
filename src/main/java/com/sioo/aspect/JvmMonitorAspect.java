@@ -1,7 +1,7 @@
 package com.sioo.aspect;
 
-import com.sioo.bo.JvmInfo;
 import com.sioo.annotation.JvmMonitor;
+import com.sioo.bo.JvmInfo;
 import com.sioo.utils.MonitorUtil;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
@@ -9,6 +9,7 @@ import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -25,6 +26,7 @@ import java.util.concurrent.Executors;
  *
  */
 @Aspect
+@Order(2)
 @Component
 public class JvmMonitorAspect {
 

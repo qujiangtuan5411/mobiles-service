@@ -1,7 +1,7 @@
 package com.sioo.aspect;
 
-import com.sioo.bo.CustomLogInfo;
 import com.sioo.annotation.ParameterLog;
+import com.sioo.bo.CustomLogInfo;
 import com.sioo.bo.LogInfo;
 import com.sioo.utils.DateStyle;
 import com.sioo.utils.DateUtil;
@@ -12,6 +12,7 @@ import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -32,6 +33,7 @@ import java.util.concurrent.Executors;
  */
 @Aspect
 @Component
+@Order(1)
 public class ParameterLogAspect {
 
     /**
