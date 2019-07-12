@@ -1,4 +1,4 @@
-package com.sioo.log.annotation;
+package com.sioo.annotation;
 
 import java.lang.annotation.*;
 
@@ -12,6 +12,7 @@ import java.lang.annotation.*;
 @Target({ElementType.METHOD,ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
+@Inherited
 public @interface JvmMonitor {
     /**
     * @Description: 是否开启监控

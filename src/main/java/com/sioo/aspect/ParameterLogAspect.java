@@ -1,11 +1,11 @@
-package com.sioo.log.aspect;
+package com.sioo.aspect;
 
-import com.sioo.log.annotation.ParameterLog;
-import com.sioo.log.bo.CustomLogInfo;
-import com.sioo.log.bo.LogInfo;
-import com.sioo.log.utils.DateStyle;
-import com.sioo.log.utils.DateUtil;
-import com.sioo.log.utils.JsonUtil;
+import com.sioo.bo.CustomLogInfo;
+import com.sioo.annotation.ParameterLog;
+import com.sioo.bo.LogInfo;
+import com.sioo.utils.DateStyle;
+import com.sioo.utils.DateUtil;
+import com.sioo.utils.JsonUtil;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -53,7 +53,7 @@ public class ParameterLogAspect {
     * @Author: fanghuaiming
     * @Date: 7:05 PM 2019/6/27
     */
-    @Pointcut("@annotation(com.sioo.log.annotation.ParameterLog)")
+    @Pointcut("@annotation(com.sioo.annotation.ParameterLog)")
     public void parameterAspect() {
     }
 

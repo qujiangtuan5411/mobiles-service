@@ -1,5 +1,5 @@
 
-package com.sioo.log.utils;
+package com.sioo.utils;
 
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
@@ -689,8 +689,8 @@ public class DateUtil {
      */
     public static int getIntervalDays(Date date, Date otherDate) {
         int num = -1;
-        Date dateTmp = DateUtil.StringToDate(DateUtil.getDate(date), DateStyle.YYYY_MM_DD);
-        Date otherDateTmp = DateUtil.StringToDate(DateUtil.getDate(otherDate), DateStyle.YYYY_MM_DD);
+        Date dateTmp = StringToDate(DateUtil.getDate(date), DateStyle.YYYY_MM_DD);
+        Date otherDateTmp = StringToDate(DateUtil.getDate(otherDate), DateStyle.YYYY_MM_DD);
         if (dateTmp != null && otherDateTmp != null) {
             long time = Math.abs(dateTmp.getTime() - otherDateTmp.getTime());
             num = (int) (time / (24 * 60 * 60 * 1000));

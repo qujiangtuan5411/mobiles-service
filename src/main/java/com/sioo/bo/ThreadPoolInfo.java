@@ -1,4 +1,4 @@
-package com.sioo.log.bo;
+package com.sioo.bo;
 
 /**
 * @Description: 线程池信息

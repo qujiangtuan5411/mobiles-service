@@ -1,18 +1,19 @@
-package com.sioo.log.annotation;
+package com.sioo.annotation;
 
 import java.lang.annotation.*;
 
 /****
- * @description：请求参数等Log注解
+ * @description：错误日志捕获注解
  *
  * @author fanghuaiming
- * @data Created in 2019/6/27 4:52 PM
+ * @data Created in 2019/6/27 4:48 PM
  *
  */
 @Target({ElementType.METHOD,ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface ParameterLog {
+@Inherited
+public @interface ExceptionLog {
 
     /** 
     * @Description: 描述 

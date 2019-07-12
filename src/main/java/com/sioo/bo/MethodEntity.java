@@ -1,4 +1,4 @@
-package com.sioo.log.bo;
+package com.sioo.bo;
 
 /****
  * @description：存储map 里面用到的统计对象

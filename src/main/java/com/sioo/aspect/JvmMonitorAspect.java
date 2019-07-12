@@ -1,8 +1,8 @@
-package com.sioo.log.aspect;
+package com.sioo.aspect;
 
-import com.sioo.log.annotation.JvmMonitor;
-import com.sioo.log.bo.JvmInfo;
-import com.sioo.log.utils.MonitorUtil;
+import com.sioo.bo.JvmInfo;
+import com.sioo.annotation.JvmMonitor;
+import com.sioo.utils.MonitorUtil;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -46,7 +46,7 @@ public class JvmMonitorAspect {
     * @Author: fanghuaiming
     * @Date:  
     */
-    @Pointcut("@annotation(com.sioo.log.annotation.JvmMonitor)")
+    @Pointcut("@annotation(com.sioo.annotation.JvmMonitor)")
     public void jvmMonitorAspect(){
 
     }

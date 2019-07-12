@@ -1,8 +1,8 @@
 
-package com.sioo.log.utils;
+package com.sioo.utils;
 
-import com.sioo.log.bo.JvmInfo;
-import com.sioo.log.bo.ThreadPoolInfo;
+import com.sioo.bo.JvmInfo;
+import com.sioo.bo.ThreadPoolInfo;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;

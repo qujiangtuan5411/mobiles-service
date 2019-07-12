@@ -1,5 +1,5 @@
 
-package com.sioo.log.bo;
+package com.sioo.bo;
 
 /** 
 * @Description: jvm信息 

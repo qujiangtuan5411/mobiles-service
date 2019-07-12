@@ -1,8 +1,8 @@
-package com.sioo.log.aspect;
+package com.sioo.aspect;
 
-import com.sioo.log.annotation.ShowTime;
-import com.sioo.log.bo.MethodEntity;
-import com.sioo.log.utils.JsonUtil;
+import com.sioo.annotation.ShowTime;
+import com.sioo.bo.MethodEntity;
+import com.sioo.utils.JsonUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -90,7 +90,7 @@ public class ShowTimeAspect {
     * @Author: fanghuaiming
     * @Date: 7:24 PM 2019/6/27
     */
-    @Pointcut("@annotation(com.sioo.log.annotation.ShowTime)")
+    @Pointcut("@annotation(com.sioo.annotation.ShowTime)")
     public void annotationPointCut() {
     }
 

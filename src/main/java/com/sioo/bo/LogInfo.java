@@ -1,4 +1,4 @@
-package com.sioo.log.bo;
+package com.sioo.bo;
 
 /**
 * @Description: 日志信息

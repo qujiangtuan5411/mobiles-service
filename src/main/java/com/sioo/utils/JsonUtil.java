@@ -1,5 +1,5 @@
 
-package com.sioo.log.utils;
+package com.sioo.utils;
 
 import com.alibaba.fastjson.JSON;
 
