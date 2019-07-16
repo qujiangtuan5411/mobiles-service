@@ -620,6 +620,15 @@ public class DateUtil {
         return DateToString(date, DateStyle.HH_MM_SS);
     }
 
+    /**
+     * 获取日期的时间。默认yyyy-MM-dd HH:mm:ss格式。失败返回null。
+     * @param date 日期
+     * @return 时间
+     */
+    public static String getYMDHMSTime(Date date) {
+        return DateToString(date, DateStyle.YYYY_MM_DD_HH_MM_SS);
+    }
+
     /** 
      * 获取日期的星期。失败返回null。 
      * @param date 日期字符串 
