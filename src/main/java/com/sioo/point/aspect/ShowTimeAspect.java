@@ -122,30 +122,31 @@ public class ShowTimeAspect {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
         ShowTime action = method.getAnnotation(ShowTime.class);
-        int threshold = action.threshold();
+        boolean switchOn = action.switchOn();
+        long threshold = action.threshold();
         // 定义返回对象、得到方法需要的参数  
         Object obj = null;
         Object[] args = joinPoint.getArgs();
-        //是否放开统计
-        if (isOpen() == 1) {
-            long startTime = System.currentTimeMillis();
+            //是否放开统计
+            if (switchOn) {
+                long startTime = System.currentTimeMillis();
 
-            obj = dealOldMethod(joinPoint, obj, args);
+                obj = dealOldMethod(joinPoint, obj, args);
 
-            long endTime = System.currentTimeMillis();
-            //超过阙值才记录.
-            if ((endTime - startTime) > threshold) {
-                // 获取执行的方法名
-                String methodName = extractLogName(method);
-                singleThreadPool
-                        .submit(new Thread(() -> dealMethodCountList(methodName,
-                                startTime, endTime)));
+                long endTime = System.currentTimeMillis();
+                //超过阙值才记录.
+                if ((endTime - startTime) > threshold) {
+                    // 获取执行的方法名
+                    String methodName = extractLogName(method);
+                    singleThreadPool
+                            .submit(new Thread(() -> dealMethodCountList(methodName,
+                                    startTime, endTime)));
+                }
             }
-        }
-        else {
-            //不需要统计时间。直接执行原来方法
-            obj = dealOldMethod(joinPoint, obj, args);
-        }
+            else {
+                //不需要统计时间。直接执行原来方法
+                obj = dealOldMethod(joinPoint, obj, args);
+            }
         return obj;
     }
 
@@ -158,11 +159,7 @@ public class ShowTimeAspect {
     */
     private Object dealOldMethod(ProceedingJoinPoint joinPoint, Object obj,
                                  Object[] args) throws Throwable {
-        if(obj == null){
-            return null;
-        }else {
             obj = joinPoint.proceed(args);
-        }
         return obj;
     }
 

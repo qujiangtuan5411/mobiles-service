@@ -18,20 +18,20 @@ import java.lang.annotation.*;
 public @interface ShowTime {
     
     /** 
-    * @Description: 切换 
+    * @Description: 是否记录超时
     * @Param:  
     * @return:  
     * @Author: fanghuaiming
     * @Date: 7:20 PM 2019/6/27
     */
-    boolean switchOn();
+    boolean switchOn() default true;
     
     /** 
-    * @Description: 保持 
+    * @Description: 请求调用时间毫秒值
     * @Param:  
     * @return:  
     * @Author: fanghuaiming
     * @Date: 7:20 PM 2019/6/27
     */
-    int threshold();
+    long threshold() default 5000;
 }
