@@ -29,7 +29,7 @@ import java.util.concurrent.Executors;
  */
 @Aspect
 @Component
-@Order(2)
+@Order(1)
 public class ShowTimeAspect {
 
     /**

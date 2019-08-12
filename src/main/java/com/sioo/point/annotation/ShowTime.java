@@ -15,7 +15,6 @@ import java.lang.annotation.*;
         ElementType.TYPE
 })
 @Documented
-@Inherited
 public @interface ShowTime {
     
     /** 
