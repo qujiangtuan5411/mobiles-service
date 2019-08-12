@@ -1,45 +1,45 @@
-package com.sioo.aspect;
+package com.sioo.point.aspect;
 
-import com.sioo.annotation.ParameterLog;
-import com.sioo.bo.CustomLogInfo;
-import com.sioo.bo.LogInfo;
-import com.sioo.utils.DateStyle;
-import com.sioo.utils.DateUtil;
-import com.sioo.utils.JsonUtil;
+import com.sioo.point.annotation.CustomLog;
+import com.sioo.point.bo.CustomLogInfo;
+import com.sioo.point.bo.LogInfo;
+import com.sioo.point.utils.DateStyle;
+import com.sioo.point.utils.DateUtil;
+import com.sioo.point.utils.JsonUtil;
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /****
- * @description：参数日志切点类
+ * @description：自定义日志切点类
  *
  * @author fanghuaiming
- * @data Created in 2019/6/27 7:04 PM
+ * @data Created in 2019/6/27 7:12 PM
  *
  */
 @Aspect
 @Component
-@Order(1)
-public class ParameterLogAspect {
+@Order(2)
+public class CustomLogAspect {
 
     /**
      * 日志对象
      */
-    private static final Logger logger = LoggerFactory.getLogger(ParameterLogAspect.class);
+    private static final Logger logger = LoggerFactory.getLogger(CustomLogAspect.class);
 
     /**
      * 线程池
@@ -48,86 +48,86 @@ public class ParameterLogAspect {
     private final ExecutorService fixedThreadPool = Executors
             .newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1);
 
-    /**
-    * @Description: 参数日志切点
+    /** 
+    * @Description: 自定义日志切点
     * @Param:
     * @return:
     * @Author: fanghuaiming
-    * @Date: 7:05 PM 2019/6/27
+    * @Date: 7:13 PM 2019/6/27
     */
-    @Pointcut("@annotation(com.sioo.annotation.ParameterLog)")
-    public void parameterAspect() {
+    @Pointcut("@annotation(com.sioo.point.annotation.CustomLog)")
+    public void customAspect() {
     }
 
+
     /** 
-    * @Description: 前置通知（用于拦截Controller层-记录入参和用户的操作） 
+    * @Description: 自定义日志处理 
     * @Param:  
     * @return:  
     * @Author: fanghuaiming
-    * @Date: 7:06 PM 2019/6/27
+    * @Date: 7:13 PM 2019/6/27
     */
-    @Before("parameterAspect()")
-    public void doBefore(JoinPoint joinPoint) {
+    @After("customAspect()")
+    public void doAfter(JoinPoint joinPoint) {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
                 .getRequest();
         fixedThreadPool.execute(new Runnable() {
             @Override
             public void run() {
-                parameterThread(joinPoint, request);
+                customThread(joinPoint, request);
             }
         });
     }
 
-    /** 
-    * @Description: 参数日志处理——线程内执行方法 
+    /**
+    * @Description: 自定义日志处理——线程内执行方法 
     * @Param:
     * @return:  
     * @Author: fanghuaiming
-    * @Date: 7:07 PM 2019/6/27
+    * @Date: 7:14 PM 2019/6/27
     */
-    private void parameterThread(JoinPoint joinPoint, HttpServletRequest request) {
+    private void customThread(JoinPoint joinPoint, HttpServletRequest request) {
         try {
-            //请求参数
-            String params = "";
+
+            String info = "";
             if (joinPoint.getArgs() != null && joinPoint.getArgs().length > 0) {
                 for (int i = 0; i < joinPoint.getArgs().length; i++) {
                     Object obj = joinPoint.getArgs()[i];
-                    if (obj instanceof BindingResult) {
-                        params += "valid bindingResult;";
-                    }
-                    // 排除自定义日志信息
-                    else if (obj instanceof CustomLogInfo) {
+                    // 如果参数类型是请求和响应的http，则不需要拼接【这两个参数，使用JSON.toJSONString()转换会抛异常】
+                    if (obj instanceof HttpServletRequest
+                            || obj instanceof HttpServletResponse)
+                    {
                         continue;
-                    }
-                    else {
-                        params += JsonUtil.toJsonString(obj) + ";";
+                    }else
+                    if (obj instanceof CustomLogInfo) {
+                        info += JsonUtil.toJsonString(obj) + ";";
                     }
                 }
             }
-            logger.info("=====前置通知开始=====");
             LogInfo log = new LogInfo();
-            log.setDescription(getParameterMethodDescription(joinPoint));
+            log.setDescription(getCustomMethodDescription(joinPoint));
             log.setMethod(
                     (joinPoint.getTarget().getClass().getName() + "." + joinPoint.getSignature().getName() + "()"));
             log.setCreateDate(DateUtil.DateToString(new Date(), DateStyle.YYYY_MM_DD_HH_MM_SS_CN));
-            log.setParams(params);
-            logger.info("前置日志信息:{}", JsonUtil.toJsonString(log));
-            logger.info("=====前置通知结束=====");
+            logger.info("=====自定义日志通知开始=====");
+            logger.info("信息描述:{}; 时间:{}; 对应方法:{}; 自定义日志摘要:{}; ", log.getDescription(), log.getCreateDate(),
+                    log.getMethod(), info);
+            logger.info("=====自定义日志通知结束=====");
         }
         catch (Exception e) {
             //记录本地异常日志
-            logger.error("【日志监控】前置通知异常-异常详细信息", e);
+            logger.error("【日志监控】自定义日志通知异常-异常详细信息", e);
         }
     }
 
-    /**
-    * @Description: 获取注解中对方法的描述信息 用于参数注解
+    /** 
+    * @Description: 获取注解中对方法的描述信息 用于自定义日志注解 
     * @Param:
-    * @return:
+    * @return:  
     * @Author: fanghuaiming
-    * @Date: 7:09 PM 2019/6/27
+    * @Date: 7:15 PM 2019/6/27
     */
-    private static String getParameterMethodDescription(JoinPoint joinPoint) throws ClassNotFoundException {
+    private static String getCustomMethodDescription(JoinPoint joinPoint) throws ClassNotFoundException {
         String targetName = joinPoint.getTarget().getClass().getName();
         String methodName = joinPoint.getSignature().getName();
         Object[] arguments = joinPoint.getArgs();
@@ -138,7 +138,7 @@ public class ParameterLogAspect {
             if (method.getName().equals(methodName)) {
                 Class[] clazzs = method.getParameterTypes();
                 if (clazzs.length == arguments.length) {
-                    description = method.getAnnotation(ParameterLog.class).description();
+                    description = method.getAnnotation(CustomLog.class).description();
                     break;
                 }
             }

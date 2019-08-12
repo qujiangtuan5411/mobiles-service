@@ -1,4 +1,4 @@
-package com.sioo.bo;
+package com.sioo.point.bo;
 
 /****
  * @description：存储map 里面用到的统计对象

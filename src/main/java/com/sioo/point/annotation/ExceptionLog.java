@@ -1,4 +1,4 @@
-package com.sioo.annotation;
+package com.sioo.point.annotation;
 
 import java.lang.annotation.*;
 
@@ -9,8 +9,11 @@ import java.lang.annotation.*;
  * @data Created in 2019/6/27 4:48 PM
  *
  */
-@Target({ElementType.METHOD,ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
+@Target({
+        ElementType.METHOD,
+        ElementType.TYPE
+})
 @Documented
 @Inherited
 public @interface ExceptionLog {

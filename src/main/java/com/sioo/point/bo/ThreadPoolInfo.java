@@ -1,4 +1,4 @@
-package com.sioo.bo;
+package com.sioo.point.bo;
 
 /**
 * @Description: 线程池信息

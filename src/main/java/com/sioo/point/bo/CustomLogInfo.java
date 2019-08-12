@@ -1,4 +1,4 @@
-package com.sioo.bo;
+package com.sioo.point.bo;
 
 /**
 * @Description: 自定义日志信息表

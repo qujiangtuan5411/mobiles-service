@@ -1,5 +1,5 @@
 
-package com.sioo.utils;
+package com.sioo.point.utils;
 
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;

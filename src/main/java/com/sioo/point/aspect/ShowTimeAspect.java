@@ -1,8 +1,8 @@
-package com.sioo.aspect;
+package com.sioo.point.aspect;
 
-import com.sioo.annotation.ShowTime;
-import com.sioo.bo.MethodEntity;
-import com.sioo.utils.JsonUtil;
+import com.sioo.point.annotation.ShowTime;
+import com.sioo.point.bo.MethodEntity;
+import com.sioo.point.utils.JsonUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -29,7 +29,7 @@ import java.util.concurrent.Executors;
  */
 @Aspect
 @Component
-@Order(1)
+@Order(2)
 public class ShowTimeAspect {
 
     /**
@@ -41,6 +41,7 @@ public class ShowTimeAspect {
     /**
      * 处理统计次数等的任务线程池
      */
+    @SuppressWarnings("all")
     private final ExecutorService singleThreadPool = Executors
             .newSingleThreadExecutor();
 
@@ -92,7 +93,7 @@ public class ShowTimeAspect {
     * @Author: fanghuaiming
     * @Date: 7:24 PM 2019/6/27
     */
-    @Pointcut("@annotation(com.sioo.annotation.ShowTime)")
+    @Pointcut("@annotation(com.sioo.point.annotation.ShowTime)")
     public void annotationPointCut() {
     }
 

@@ -1,5 +1,5 @@
 
-package com.sioo.utils;
+package com.sioo.point.utils;
 
 /** 
 * @Description: 周信息enum 

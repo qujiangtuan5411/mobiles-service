@@ -1,5 +1,5 @@
 
-package com.sioo.bo;
+package com.sioo.point.bo;
 
 /** 
 * @Description: jvm信息 

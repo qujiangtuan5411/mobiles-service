@@ -1,13 +1,11 @@
-package com.sioo.aspect;
+package com.sioo.point.aspect;
 
-import com.sioo.annotation.CustomLog;
-import com.sioo.bo.CustomLogInfo;
-import com.sioo.bo.LogInfo;
-import com.sioo.utils.DateStyle;
-import com.sioo.utils.DateUtil;
-import com.sioo.utils.JsonUtil;
+import com.sioo.point.annotation.ExceptionLog;
+import com.sioo.point.bo.LogInfo;
+import com.sioo.point.utils.DateStyle;
+import com.sioo.point.utils.DateUtil;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.After;
+import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
@@ -24,21 +22,21 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /****
- * @description：自定义日志切点类
+ * @description：错误日志捕获切点类
  *
  * @author fanghuaiming
- * @data Created in 2019/6/27 7:12 PM
+ * @data Created in 2019/6/27 6:55 PM
  *
  */
 @Aspect
 @Component
-@Order(1)
-public class CustomLogAspect {
+@Order(2)
+public class ExceptionLogAspect {
 
     /**
      * 日志对象
      */
-    private static final Logger logger = LoggerFactory.getLogger(CustomLogAspect.class);
+    private static final Logger logger = LoggerFactory.getLogger(ExceptionLogAspect.class);
 
     /**
      * 线程池
@@ -47,80 +45,69 @@ public class CustomLogAspect {
     private final ExecutorService fixedThreadPool = Executors
             .newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1);
 
-    /** 
-    * @Description: 自定义日志切点
+    /**
+    * @Description: 异常日志的切点
     * @Param:
     * @return:
     * @Author: fanghuaiming
-    * @Date: 7:13 PM 2019/6/27
+    * @Date: 6:57 PM 2019/6/27
     */
-    @Pointcut("@annotation(com.sioo.annotation.CustomLog)")
-    public void customAspect() {
+    @Pointcut("@annotation(com.sioo.point.annotation.ExceptionLog)")
+    public void exceptionAspect() {
     }
 
-
     /** 
-    * @Description: 自定义日志处理 
+    * @Description: 异常通知（用于拦截和记录异常日志 
     * @Param:  
     * @return:  
     * @Author: fanghuaiming
-    * @Date: 7:13 PM 2019/6/27
+    * @Date: 7:00 PM 2019/6/27
     */
-    @After("customAspect()")
-    public void doAfter(JoinPoint joinPoint) {
+    @AfterThrowing(pointcut = "exceptionAspect()", throwing = "e")
+    public void doAfterThrowing(JoinPoint joinPoint, Throwable e) {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
                 .getRequest();
         fixedThreadPool.execute(new Runnable() {
             @Override
             public void run() {
-                customThread(joinPoint, request);
+                exceptionThread(joinPoint, e, request);
             }
         });
     }
 
     /** 
-    * @Description: 自定义日志处理——线程内执行方法 
+    * @Description: 异常日志处理——线程内执行方法 
     * @Param:
     * @return:  
     * @Author: fanghuaiming
-    * @Date: 7:14 PM 2019/6/27
+    * @Date: 7:01 PM 2019/6/27
     */
-    private void customThread(JoinPoint joinPoint, HttpServletRequest request) {
+    private void exceptionThread(JoinPoint joinPoint, Throwable e, HttpServletRequest request) {
         try {
-            //自定义日志参数
-            String info = "";
-            if (joinPoint.getArgs() != null && joinPoint.getArgs().length > 0) {
-                for (int i = 0; i < joinPoint.getArgs().length; i++) {
-                    Object obj = joinPoint.getArgs()[i];
-                    if (obj instanceof CustomLogInfo) {
-                        info += JsonUtil.toJsonString(obj) + ";";
-                    }
-                }
-            }
             LogInfo log = new LogInfo();
-            log.setDescription(getCustomMethodDescription(joinPoint));
+            log.setDescription(getExceptionMethodDescription(joinPoint));
+            log.setExceptionCode(e.getClass().getName());
+            log.setExceptionDetail(e.getMessage());
             log.setMethod(
                     (joinPoint.getTarget().getClass().getName() + "." + joinPoint.getSignature().getName() + "()"));
             log.setCreateDate(DateUtil.DateToString(new Date(), DateStyle.YYYY_MM_DD_HH_MM_SS_CN));
-            logger.info("=====自定义日志通知开始=====");
-            logger.info("信息描述:{}; 时间:{}; 对应方法:{}; 自定义日志摘要:{}; ", log.getDescription(), log.getCreateDate(),
-                    log.getMethod(), info);
-            logger.info("=====自定义日志通知结束=====");
+            logger.error("异常描述:{}; 时间:{}; 异常方法:{}; 异常信息摘要:{}; ", log.getDescription(), log.getCreateDate(),
+                    log.getRequestIp(), log.getMethod(), e.getMessage(), e);
         }
-        catch (Exception e) {
+        catch (Exception ex) {
             //记录本地异常日志
-            logger.error("【日志监控】自定义日志通知异常-异常详细信息", e);
+            logger.error("【日志监控】异常捕获出错-异常详细信息", ex);
         }
     }
 
     /** 
-    * @Description: 获取注解中对方法的描述信息 用于自定义日志注解 
+    * @Description: 获取注解中对方法的描述信息 用于错误日志注解  
     * @Param:
     * @return:  
     * @Author: fanghuaiming
-    * @Date: 7:15 PM 2019/6/27
+    * @Date: 7:02 PM 2019/6/27
     */
-    private static String getCustomMethodDescription(JoinPoint joinPoint) throws ClassNotFoundException {
+    private static String getExceptionMethodDescription(JoinPoint joinPoint) throws ClassNotFoundException {
         String targetName = joinPoint.getTarget().getClass().getName();
         String methodName = joinPoint.getSignature().getName();
         Object[] arguments = joinPoint.getArgs();
@@ -131,7 +118,7 @@ public class CustomLogAspect {
             if (method.getName().equals(methodName)) {
                 Class[] clazzs = method.getParameterTypes();
                 if (clazzs.length == arguments.length) {
-                    description = method.getAnnotation(CustomLog.class).description();
+                    description = method.getAnnotation(ExceptionLog.class).description();
                     break;
                 }
             }
