@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -104,6 +105,8 @@ public class ParameterLogAspect {
                     }
                     // 排除自定义日志信息
                     else if (obj instanceof CustomLogInfo) {
+                        continue;
+                    }else if(obj instanceof MultipartFile){
                         continue;
                     }
                     else {
