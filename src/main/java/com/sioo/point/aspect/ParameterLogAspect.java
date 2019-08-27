@@ -18,6 +18,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -107,6 +108,8 @@ public class ParameterLogAspect {
                     else if (obj instanceof CustomLogInfo) {
                         continue;
                     }else if(obj instanceof MultipartFile){
+                        continue;
+                    }else if(obj instanceof CommonsMultipartFile){
                         continue;
                     }
                     else {
