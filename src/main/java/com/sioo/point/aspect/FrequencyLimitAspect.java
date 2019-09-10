@@ -13,7 +13,10 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
@@ -63,6 +66,8 @@ public class FrequencyLimitAspect {
     */
     @Around("annotationPointCut()")
     public Object frequencyBefore(ProceedingJoinPoint joinPoint) throws Throwable {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String key = request.getRequestURI().replace("/","");
         //往redis里面原子自增，date_user: frequency，判断结果是否超出入参
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
@@ -71,7 +76,7 @@ public class FrequencyLimitAspect {
         String date = DateUtil.DateToString(new Date(), "yyyyMMdd");
         Object[] args = joinPoint.getArgs();
         long userName = JSON.parseObject(JSONObject.toJSONString(args[0])).getLong("uid");
-        long frequencyAfter = monitoringRedisUtil.incr(date+"_"+userName, 1);
+        long frequencyAfter = monitoringRedisUtil.incr(key+"_"+date+"_"+userName, 1);
         //超过设定的频率
         if(frequencyAfter>frequency){
             throw new Exception("exceeds frequency limit");
