@@ -75,7 +75,12 @@ public class FrequencyLimitAspect {
         long frequency = action.frequency();
         String date = DateUtil.DateToString(new Date(), "yyyyMMdd");
         Object[] args = joinPoint.getArgs();
-        long userName = JSON.parseObject(JSONObject.toJSONString(args[0])).getLong("uid");
+        Integer userName;
+        if(args[0].getClass().getClassLoader()==null){
+            userName = Integer.parseInt(args[0].toString());
+        }else{
+            userName = JSON.parseObject(JSONObject.toJSONString(args[0])).getInteger("uid");
+        }
         long frequencyAfter = monitoringRedisUtil.incr(key+"_"+date+"_"+userName, 1);
         //超过设定的频率
         if(frequencyAfter>frequency){
