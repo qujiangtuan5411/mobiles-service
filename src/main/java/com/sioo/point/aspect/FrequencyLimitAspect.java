@@ -82,6 +82,11 @@ public class FrequencyLimitAspect {
             userName = JSON.parseObject(JSONObject.toJSONString(args[0])).getInteger("uid");
         }
         long frequencyAfter = monitoringRedisUtil.incr(key+"_"+date+"_"+userName, 1);
+
+        // 如果该key不存在，则从0开始计算，并且当count为1的时候，设置过期时间,过期时间为秒单位
+        if (frequencyAfter == 1) {
+            monitoringRedisUtil.expire(key+"_"+date+"_"+userName, action.timeSecond());
+        }
         //超过设定的频率
         if(frequencyAfter>frequency){
             throw new Exception("exceeds frequency limit");
