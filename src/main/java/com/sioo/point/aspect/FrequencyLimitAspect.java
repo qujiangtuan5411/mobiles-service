@@ -19,8 +19,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Date;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 
 /****
@@ -39,14 +37,6 @@ public class FrequencyLimitAspect {
     private MonitoringRedisUtil monitoringRedisUtil;
 
     /**
-     * 处理统计次数等的任务线程池
-     */
-    @SuppressWarnings("all")
-    private final ExecutorService singleThreadPool = Executors
-            .newSingleThreadExecutor();
-
-
-    /** 
     * @Description: aop切点的区域 
     * @Param:
     * @return:  
@@ -83,7 +73,7 @@ public class FrequencyLimitAspect {
         }
         long frequencyAfter = monitoringRedisUtil.incr(key+"_"+date+"_"+userName, 1);
 
-        // 如果该key不存在，则从0开始计算，并且当count为1的时候，设置过期时间,过期时间为秒单位
+        // 如果该key不存在，则从0开始计算，并且当frequencyAfter为1的时候，设置过期时间,过期时间为秒单位
         if (frequencyAfter == 1) {
             monitoringRedisUtil.expire(key+"_"+date+"_"+userName, action.timeSecond());
         }
