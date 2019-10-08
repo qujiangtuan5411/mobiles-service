@@ -68,7 +68,7 @@ public class FrequencyLimitAspect {
         String date = DateUtil.DateToString(new Date(), "yyyyMMdd");
         Object[] args = joinPoint.getArgs();
         Integer userName;
-        if("smsAccountgetChildId".equals(key)){
+        if("getChildId".equals(key)){
             userName = Integer.parseInt(args[0].toString());
         }else{
             userName = JSON.parseObject(JSONObject.toJSONString(args[0])).getInteger("uid");
