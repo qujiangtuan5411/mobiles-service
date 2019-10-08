@@ -58,7 +58,8 @@ public class FrequencyLimitAspect {
     @Around("annotationPointCut()")
     public Object frequencyBefore(ProceedingJoinPoint joinPoint) throws Throwable {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String key = request.getRequestURI().replace("/","");
+        String uri = request.getRequestURI();
+        String key = uri.substring(uri.lastIndexOf("/")+1);
         //往redis里面原子自增，date_user: frequency，判断结果是否超出入参
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
