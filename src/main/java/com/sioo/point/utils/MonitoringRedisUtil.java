@@ -1,11 +1,11 @@
 package com.sioo.point.utils;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,11 +22,11 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class MonitoringRedisUtil {
 
-    @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
+    @Resource
+    private RedisTemplate<String, Object> generateBatchIdRedisTemplate;
 
     public MonitoringRedisUtil(RedisTemplate<String, Object> redisTemplate) {
-        this.redisTemplate = redisTemplate;
+        this.generateBatchIdRedisTemplate = redisTemplate;
     }
 
     /**
@@ -40,7 +40,7 @@ public class MonitoringRedisUtil {
     public boolean expire(String key,long time){
         try {
             if(time>0){
-                redisTemplate.expire(key, time, TimeUnit.SECONDS);
+                generateBatchIdRedisTemplate.expire(key, time, TimeUnit.SECONDS);
             }
             return true;
         } catch (Exception e) {
@@ -57,7 +57,7 @@ public class MonitoringRedisUtil {
     * @Date: 1:37 PM 2019/8/2
     */
     public long getExpire(String key){
-        return redisTemplate.getExpire(key,TimeUnit.SECONDS);
+        return generateBatchIdRedisTemplate.getExpire(key,TimeUnit.SECONDS);
     }
 
     /**
@@ -69,7 +69,7 @@ public class MonitoringRedisUtil {
     */
     public boolean hasKey(String key){
         try {
-            return redisTemplate.hasKey(key);
+            return generateBatchIdRedisTemplate.hasKey(key);
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -86,9 +86,9 @@ public class MonitoringRedisUtil {
     public void del(String ... key){
         if(key!=null&&key.length>0){
             if(key.length==1){
-                redisTemplate.delete(key[0]);
+                generateBatchIdRedisTemplate.delete(key[0]);
             }else{
-                redisTemplate.delete(CollectionUtils.arrayToList(key));
+                generateBatchIdRedisTemplate.delete(CollectionUtils.arrayToList(key));
             }
         }
     }
@@ -102,7 +102,7 @@ public class MonitoringRedisUtil {
     * @Date: 1:39 PM 2019/8/2
     */
     public Object get(String key){
-        return key==null?null:redisTemplate.opsForValue().get(key);
+        return key==null?null: generateBatchIdRedisTemplate.opsForValue().get(key);
     }
 
     /**
@@ -114,7 +114,7 @@ public class MonitoringRedisUtil {
     */
     public boolean set(String key,Object value) {
         try {
-            redisTemplate.opsForValue().set(key, value);
+            generateBatchIdRedisTemplate.opsForValue().set(key, value);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -134,7 +134,7 @@ public class MonitoringRedisUtil {
     public boolean set(String key,Object value,long time){
         try {
             if(time>0){
-                redisTemplate.opsForValue().set(key, value, time, TimeUnit.SECONDS);
+                generateBatchIdRedisTemplate.opsForValue().set(key, value, time, TimeUnit.SECONDS);
             }else{
                 set(key, value);
             }
@@ -156,7 +156,7 @@ public class MonitoringRedisUtil {
         if(delta<0){
             throw new RuntimeException("递增因子必须大于0");
         }
-        return redisTemplate.opsForValue().increment(key, delta);
+        return generateBatchIdRedisTemplate.opsForValue().increment(key, delta);
     }
 
     /**
@@ -171,7 +171,7 @@ public class MonitoringRedisUtil {
         if(delta<0){
             throw new RuntimeException("递减因子必须大于0");
         }
-        return redisTemplate.opsForValue().increment(key, -delta);
+        return generateBatchIdRedisTemplate.opsForValue().increment(key, -delta);
     }
 
     //================================Map=================================
@@ -184,7 +184,7 @@ public class MonitoringRedisUtil {
      * @Date: 1:41 PM 2019/8/2
      */
     public Object hget(String key,String item){
-        return redisTemplate.opsForHash().get(key, item);
+        return generateBatchIdRedisTemplate.opsForHash().get(key, item);
     }
 
     /**
@@ -195,7 +195,7 @@ public class MonitoringRedisUtil {
      * @Date: 1:41 PM 2019/8/2
      */
     public Map<Object,Object> hmget(String key){
-        return redisTemplate.opsForHash().entries(key);
+        return generateBatchIdRedisTemplate.opsForHash().entries(key);
     }
 
     /**
@@ -208,7 +208,7 @@ public class MonitoringRedisUtil {
      */
     public boolean hmset(String key, Map<String,Object> map){
         try {
-            redisTemplate.opsForHash().putAll(key, map);
+            generateBatchIdRedisTemplate.opsForHash().putAll(key, map);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -227,7 +227,7 @@ public class MonitoringRedisUtil {
      */
     public boolean hmset(String key, Map<String,Object> map, long time){
         try {
-            redisTemplate.opsForHash().putAll(key, map);
+            generateBatchIdRedisTemplate.opsForHash().putAll(key, map);
             if(time>0){
                 expire(key, time);
             }
@@ -249,7 +249,7 @@ public class MonitoringRedisUtil {
      */
     public boolean hset(String key,String item,Object value) {
         try {
-            redisTemplate.opsForHash().put(key, item, value);
+            generateBatchIdRedisTemplate.opsForHash().put(key, item, value);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -269,7 +269,7 @@ public class MonitoringRedisUtil {
      */
     public boolean hset(String key,String item,Object value,long time) {
         try {
-            redisTemplate.opsForHash().put(key, item, value);
+            generateBatchIdRedisTemplate.opsForHash().put(key, item, value);
             if(time>0){
                 expire(key, time);
             }
@@ -288,7 +288,7 @@ public class MonitoringRedisUtil {
      * @Date: 1:41 PM 2019/8/2
      */
     public void hdel(String key, Object... item){
-        redisTemplate.opsForHash().delete(key,item);
+        generateBatchIdRedisTemplate.opsForHash().delete(key,item);
     }
 
     /**
@@ -300,7 +300,7 @@ public class MonitoringRedisUtil {
      * @Date: 1:41 PM 2019/8/2
      */
     public boolean hHasKey(String key, String item){
-        return redisTemplate.opsForHash().hasKey(key, item);
+        return generateBatchIdRedisTemplate.opsForHash().hasKey(key, item);
     }
 
     /**
@@ -313,7 +313,7 @@ public class MonitoringRedisUtil {
      * @Date: 1:41 PM 2019/8/2
      */
     public double hincr(String key, String item,double by){
-        return redisTemplate.opsForHash().increment(key, item, by);
+        return generateBatchIdRedisTemplate.opsForHash().increment(key, item, by);
     }
 
     /**
@@ -326,7 +326,7 @@ public class MonitoringRedisUtil {
      * @Date: 1:41 PM 2019/8/2
      */
     public double hdecr(String key, String item,double by){
-        return redisTemplate.opsForHash().increment(key, item,-by);
+        return generateBatchIdRedisTemplate.opsForHash().increment(key, item,-by);
     }
 
     //============================set=============================
@@ -339,7 +339,7 @@ public class MonitoringRedisUtil {
      */
     public Set<Object> sGet(String key){
         try {
-            return redisTemplate.opsForSet().members(key);
+            return generateBatchIdRedisTemplate.opsForSet().members(key);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -356,7 +356,7 @@ public class MonitoringRedisUtil {
      */
     public boolean sHasKey(String key,Object value){
         try {
-            return redisTemplate.opsForSet().isMember(key, value);
+            return generateBatchIdRedisTemplate.opsForSet().isMember(key, value);
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -373,7 +373,7 @@ public class MonitoringRedisUtil {
      */
     public long sSet(String key, Object...values) {
         try {
-            return redisTemplate.opsForSet().add(key, values);
+            return generateBatchIdRedisTemplate.opsForSet().add(key, values);
         } catch (Exception e) {
             e.printStackTrace();
             return 0;
@@ -391,7 +391,7 @@ public class MonitoringRedisUtil {
      */
     public long sSetAndTime(String key,long time,Object...values) {
         try {
-            Long count = redisTemplate.opsForSet().add(key, values);
+            Long count = generateBatchIdRedisTemplate.opsForSet().add(key, values);
             if(time>0) {
                 expire(key, time);
             }
@@ -411,7 +411,7 @@ public class MonitoringRedisUtil {
      */
     public long sGetSetSize(String key){
         try {
-            return redisTemplate.opsForSet().size(key);
+            return generateBatchIdRedisTemplate.opsForSet().size(key);
         } catch (Exception e) {
             e.printStackTrace();
             return 0;
@@ -428,7 +428,7 @@ public class MonitoringRedisUtil {
      */
     public long setRemove(String key, Object ...values) {
         try {
-            Long count = redisTemplate.opsForSet().remove(key, values);
+            Long count = generateBatchIdRedisTemplate.opsForSet().remove(key, values);
             return count;
         } catch (Exception e) {
             e.printStackTrace();
@@ -448,7 +448,7 @@ public class MonitoringRedisUtil {
      */
     public List<Object> lGet(String key, long start, long end){
         try {
-            return redisTemplate.opsForList().range(key, start, end);
+            return generateBatchIdRedisTemplate.opsForList().range(key, start, end);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -464,7 +464,7 @@ public class MonitoringRedisUtil {
      */
     public long lGetListSize(String key){
         try {
-            return redisTemplate.opsForList().size(key);
+            return generateBatchIdRedisTemplate.opsForList().size(key);
         } catch (Exception e) {
             e.printStackTrace();
             return 0;
@@ -481,7 +481,7 @@ public class MonitoringRedisUtil {
      */
     public Object lGetIndex(String key,long index){
         try {
-            return redisTemplate.opsForList().index(key, index);
+            return generateBatchIdRedisTemplate.opsForList().index(key, index);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -498,7 +498,7 @@ public class MonitoringRedisUtil {
      */
     public boolean lSet(String key, Object value) {
         try {
-            redisTemplate.opsForList().rightPush(key, value);
+            generateBatchIdRedisTemplate.opsForList().rightPush(key, value);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -517,7 +517,7 @@ public class MonitoringRedisUtil {
      */
     public boolean lSet(String key, Object value, long time) {
         try {
-            redisTemplate.opsForList().rightPush(key, value);
+            generateBatchIdRedisTemplate.opsForList().rightPush(key, value);
             if (time > 0) {
                 expire(key, time);
             }
@@ -538,7 +538,7 @@ public class MonitoringRedisUtil {
      */
     public boolean lSet(String key, List<Object> value) {
         try {
-            redisTemplate.opsForList().rightPushAll(key, value);
+            generateBatchIdRedisTemplate.opsForList().rightPushAll(key, value);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -557,7 +557,7 @@ public class MonitoringRedisUtil {
      */
     public boolean lSet(String key, List<Object> value, long time) {
         try {
-            redisTemplate.opsForList().rightPushAll(key, value);
+            generateBatchIdRedisTemplate.opsForList().rightPushAll(key, value);
             if (time > 0) {
                 expire(key, time);
             }
@@ -579,7 +579,7 @@ public class MonitoringRedisUtil {
      */
     public boolean lUpdateIndex(String key, long index,Object value) {
         try {
-            redisTemplate.opsForList().set(key, index, value);
+            generateBatchIdRedisTemplate.opsForList().set(key, index, value);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -598,7 +598,7 @@ public class MonitoringRedisUtil {
      */
     public long lRemove(String key,long count,Object value) {
         try {
-            Long remove = redisTemplate.opsForList().remove(key, count, value);
+            Long remove = generateBatchIdRedisTemplate.opsForList().remove(key, count, value);
             return remove;
         } catch (Exception e) {
             e.printStackTrace();
@@ -614,7 +614,7 @@ public class MonitoringRedisUtil {
      * @Date: 1:41 PM 2019/8/2
      */
     public Set keys(String pattern){
-        return redisTemplate.keys(pattern);
+        return generateBatchIdRedisTemplate.keys(pattern);
     }
 
     /**
@@ -625,7 +625,7 @@ public class MonitoringRedisUtil {
      * @Date: 1:41 PM 2019/8/2
      */
     public void convertAndSend(String channel, Object message){
-        redisTemplate.convertAndSend(channel,message);
+        generateBatchIdRedisTemplate.convertAndSend(channel,message);
     }
 
 
@@ -641,7 +641,7 @@ public class MonitoringRedisUtil {
      */
     /*public void addToListRight(String listKey, Status.ExpireEnum expireEnum, Object... values) {
         //绑定操作
-        BoundListOperations<String, Object> boundValueOperations = redisTemplate.boundListOps(listKey);
+        BoundListOperations<String, Object> boundValueOperations = generateBatchIdRedisTemplate.boundListOps(listKey);
         //插入数据
         boundValueOperations.rightPushAll(values);
         //设置过期时间
@@ -658,7 +658,7 @@ public class MonitoringRedisUtil {
      */
     public List<Object> rangeList(String listKey, long start, long end) {
         //绑定操作
-        BoundListOperations<String, Object> boundValueOperations = redisTemplate.boundListOps(listKey);
+        BoundListOperations<String, Object> boundValueOperations = generateBatchIdRedisTemplate.boundListOps(listKey);
         //查询数据
         return boundValueOperations.range(start, end);
     }
@@ -670,7 +670,7 @@ public class MonitoringRedisUtil {
      */
     public Object rifhtPop(String listKey){
         //绑定操作
-        BoundListOperations<String, Object> boundValueOperations = redisTemplate.boundListOps(listKey);
+        BoundListOperations<String, Object> boundValueOperations = generateBatchIdRedisTemplate.boundListOps(listKey);
         return boundValueOperations.rightPop();
     }
 
