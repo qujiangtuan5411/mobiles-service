@@ -73,13 +73,13 @@ public class IdempotentAspect {
                     .append(jsonObject.getString("messageName"))
                     .append(jsonObject.getString("mobiles"));
             String idempotentKey = MD5Utils.toMD5(stringBuilder.toString());
-            Object idempotentObj = monitoringRedisUtil.get("siooVM_idempotent");
+            Object idempotentObj = monitoringRedisUtil.get(jsonObject.getInteger("templateId")+"_siooVM_idempotent");
             if(idempotentObj != null && idempotentObj.equals(idempotentKey)){
                 throw new Exception("idempotentException");
             }
             //执行请求
             obj = dealOldMethod(joinPoint, obj, args);
-            monitoringRedisUtil.set("siooVM_idempotent",idempotentKey,expire);
+            monitoringRedisUtil.set(jsonObject.getInteger("templateId")+"_siooVM_idempotent",idempotentKey,expire);
         }
         return obj;
     }
