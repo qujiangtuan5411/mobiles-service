@@ -27,7 +27,7 @@ import java.util.concurrent.Executors;
  */
 @Aspect
 @Component
-@Order(1)
+@Order(3)
 public class JvmMonitorAspect {
 
     /**

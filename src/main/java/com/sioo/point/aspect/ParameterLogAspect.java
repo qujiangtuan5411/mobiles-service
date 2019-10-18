@@ -36,7 +36,7 @@ import java.util.concurrent.Executors;
  */
 @Aspect
 @Component
-@Order(1)
+@Order(2)
 public class ParameterLogAspect {
 
     /**

@@ -31,6 +31,25 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
+		<repository>
+			<id>central</id>
+			<name>Atlassian Public Repository</name>
+			<layout>default</layout>
+			<url>https://maven.atlassian.com/content/groups/public/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<!--swagger2markdown文档相关联的repository地址-->
+		<!--		<repository>-->
+		<!--			<snapshots>-->
+		<!--				<enabled>true</enabled>-->
+		<!--				<updatePolicy>always</updatePolicy>-->
+		<!--			</snapshots>-->
+		<!--			<id>jcenter-releases</id>-->
+		<!--			<name>jcenter</name>-->
+		<!--			<url>http://jcenter.bintray.com</url>-->
+		<!--		</repository>-->
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
@@ -138,6 +157,12 @@
 			<version>2.1.9.RELEASE</version>
 			<scope>compile</scope>
 		</dependency>
+		<!--lombok-->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.8</version>
+		</dependency>
 	</dependencies>
 
 	<!-- 定义依赖包 -->
@@ -183,6 +208,16 @@
 				<artifactId>spring-test</artifactId>
 				<version>${springtest.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>commons-codec</groupId>
+				<artifactId>commons-codec</artifactId>
+				<version>${commons-codec.version}</version>
+			</dependency>
+			<!--lombok-->
+			<dependency>
+				<groupId>org.projectlombok</groupId>
+				<artifactId>lombok</artifactId>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -201,5 +236,6 @@
 		<springweb.version>4.3.9.RELEASE</springweb.version>
 		<aspectj.version>1.8.10</aspectj.version>
 		<springboot.version>1.5.4.RELEASE</springboot.version>
+		<commons-codec.version>1.10</commons-codec.version>
 	</properties>
 </project>
