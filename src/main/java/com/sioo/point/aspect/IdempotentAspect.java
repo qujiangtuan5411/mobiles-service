@@ -73,13 +73,16 @@ public class IdempotentAspect {
                     .append(jsonObject.getString("messageName"))
                     .append(jsonObject.getString("mobiles"));
             String idempotentKey = MD5Utils.toMD5(stringBuilder.toString());
-            Object idempotentObj = monitoringRedisUtil.get(jsonObject.getInteger("templateId")+"_siooVM_idempotent");
-            if(idempotentObj != null && idempotentObj.equals(idempotentKey)){
+            long incr = monitoringRedisUtil.incr(jsonObject.getInteger("templateId").toString()+"_"+idempotentKey, 1);
+            // 如果该key不存在，则从0开始计算，并且当incr为1的时候，设置过期时间,过期时间为秒单位
+            if (incr == 1) {
+                monitoringRedisUtil.expire(jsonObject.getInteger("templateId").toString()+"_"+idempotentKey, expire);
+            }
+            if(incr > 1){
                 throw new Exception("idempotentException");
             }
             //执行请求
             obj = dealOldMethod(joinPoint, obj, args);
-            monitoringRedisUtil.set(jsonObject.getInteger("templateId")+"_siooVM_idempotent",idempotentKey,expire);
         }
         return obj;
     }
