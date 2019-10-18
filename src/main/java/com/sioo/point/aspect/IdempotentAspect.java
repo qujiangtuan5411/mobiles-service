@@ -58,7 +58,7 @@ public class IdempotentAspect {
         String description = annotation.description();
         long expire = annotation.expire();
         if(!description.equals("")){
-            logger.info("幂等性:{}", description);
+            logger.info("=====幂等性:{}=====", description);
         }
         // 定义返回对象、得到方法需要的参数
         Object obj = null;
@@ -75,7 +75,7 @@ public class IdempotentAspect {
             String idempotentKey = MD5Utils.toMD5(stringBuilder.toString());
             Object idempotentObj = monitoringRedisUtil.get("siooVM_idempotent");
             if(idempotentObj != null && idempotentObj.equals(idempotentKey)){
-                throw new RuntimeException("idempotentException");
+                throw new Exception("idempotentException");
             }
             //执行请求
             obj = dealOldMethod(joinPoint, obj, args);
