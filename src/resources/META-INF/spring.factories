@@ -1,0 +1,2 @@
+#自动装配配置
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.sioo.point.config.RedisAutoConfiguration

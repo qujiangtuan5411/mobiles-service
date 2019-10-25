@@ -1,11 +1,12 @@
 package com.sioo.point.utils;
 
+import com.sioo.point.config.GenerateRedisTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,11 +23,10 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class MonitoringRedisUtil {
 
-    @Resource
     private RedisTemplate<String, Object> generateBatchIdRedisTemplate;
 
-    public MonitoringRedisUtil(RedisTemplate<String, Object> redisTemplate) {
-        this.generateBatchIdRedisTemplate = redisTemplate;
+    public MonitoringRedisUtil(@Autowired GenerateRedisTemplate generateRedisTemplate) {
+        this.generateBatchIdRedisTemplate = generateRedisTemplate.generateBatchIdRedisTemplate();
     }
 
     /**
