@@ -6,17 +6,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
-import org.springframework.cache.annotation.CachingConfigurerSupport;
-import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisPassword;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration;
-import org.springframework.data.redis.core.*;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.util.ObjectUtils;
@@ -32,7 +30,12 @@ import java.time.Duration;
 @Getter
 @Setter
 @Order(2)
-public class GenerateRedisTemplate extends CachingConfigurerSupport {
+public class GenerateRedisTemplate /*extends CachingConfigurerSupport */{
+
+	/**
+	 * 日志对象
+	 */
+	private static final Logger logger = LoggerFactory.getLogger(GenerateRedisTemplate.class);
 
 	private int database;
 
@@ -66,6 +69,7 @@ public class GenerateRedisTemplate extends CachingConfigurerSupport {
 		if (!ObjectUtils.isEmpty(password)) {
 			RedisPassword redisPassword = RedisPassword.of(password);
 			configuration.setPassword(redisPassword);
+			logger.info("======您当前监控monitoring组件所使用redis配置=【ip:{}】【port:{}】【password:{}】【database:{}】======",hostName,port,password,database);
 		}
 
 		/* ========= 连接池通用配置 ========= */
@@ -127,66 +131,6 @@ public class GenerateRedisTemplate extends CachingConfigurerSupport {
 		redisTemplate.setHashValueSerializer(jackson2JsonRedisSerializer);
 		redisTemplate.afterPropertiesSet();
 		return redisTemplate;
-	}
-
-	/**
-	 * @Description: 对hash类型的数据操作
-	 * @Param:
-	 * @return:
-	 * @Author: fanghuaiming
-	 * @Date: 1:24 PM 2019/8/2
-	 */
-	@Bean
-	public HashOperations<String, String, Object> hashOperations(RedisTemplate<String, Object> redisTemplate) {
-		return redisTemplate.opsForHash();
-	}
-
-	/**
-	 * @Description: 对redis字符串类型数据操作
-	 * @Param:
-	 * @return:
-	 * @Author: fanghuaiming
-	 * @Date: 1:24 PM 2019/8/2
-	 */
-	@Bean
-	public ValueOperations<String, Object> valueOperations(RedisTemplate<String, Object> redisTemplate) {
-		return redisTemplate.opsForValue();
-	}
-
-	/**
-	 * @Description: 对链表类型的数据操作
-	 * @Param:
-	 * @return:
-	 * @Author: fanghuaiming
-	 * @Date: 1:25 PM 2019/8/2
-	 */
-	@Bean
-	public ListOperations<String, Object> listOperations(RedisTemplate<String, Object> redisTemplate) {
-		return redisTemplate.opsForList();
-	}
-
-	/**
-	 * @Description: 对无序集合类型的数据操作
-	 * @Param:
-	 * @return:
-	 * @Author: fanghuaiming
-	 * @Date: 1:25 PM 2019/8/2
-	 */
-	@Bean
-	public SetOperations<String, Object> setOperations(RedisTemplate<String, Object> redisTemplate) {
-		return redisTemplate.opsForSet();
-	}
-
-	/**
-	 * @Description: 对有序集合类型的数据操作
-	 * @Param:
-	 * @return:
-	 * @Author: fanghuaiming
-	 * @Date: 1:25 PM 2019/8/2
-	 */
-	@Bean
-	public ZSetOperations<String, Object> zSetOperations(RedisTemplate<String, Object> redisTemplate) {
-		return redisTemplate.opsForZSet();
 	}
 
 }

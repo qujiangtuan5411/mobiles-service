@@ -8,6 +8,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.data.redis.core.RedisTemplate;
 
 /****
  * @description：自动装配类
@@ -35,9 +36,9 @@ public class RedisAutoConfiguration {
      * @Author: fanghuaiming
      * @Date: 3:29 PM 2019/10/24
      */
-    @Bean
+    @Bean("generateRedisTemplate")
     @ConditionalOnMissingBean(GenerateRedisTemplate.class)
-    public GenerateRedisTemplate createBean() {
+    public RedisTemplate createBean() {
         GenerateRedisTemplate redisConfig = new GenerateRedisTemplate();
         redisConfig.setDatabase(pointRedisProperties.getDatabase());
         redisConfig.setHostName(pointRedisProperties.getHostName());
@@ -48,6 +49,6 @@ public class RedisAutoConfiguration {
         redisConfig.setPassword(pointRedisProperties.getPassword());
         redisConfig.setPort(pointRedisProperties.getPort());
         redisConfig.setTimeout(pointRedisProperties.getTimeout());
-        return redisConfig;
+        return redisConfig.generateBatchIdRedisTemplate();
     }
 }
