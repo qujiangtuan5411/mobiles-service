@@ -1,4 +1,3 @@
-/*
 package com.sioo.point.config;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -9,40 +8,35 @@ import lombok.Setter;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisPassword;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import org.springframework.util.ObjectUtils;
 
 import java.time.Duration;
 
-*/
 /**
- * GenerateRedisTemplate
+ * 原生redisTemplate
  *
  * @author seer
  * @date 2018/5/30 09:32
- *//*
-
+ */
 @Getter
 @Setter
 @Order(2)
-public class GenerateRedisTemplate */
-/*extends CachingConfigurerSupport *//*
-{
+public class GenerateRedisTemplateOri /*extends CachingConfigurerSupport */{
 
-	*/
-/**
+	/**
 	 * 日志对象
-	 *//*
-
-	private static final Logger logger = LoggerFactory.getLogger(GenerateRedisTemplate.class);
+	 */
+	private static final Logger logger = LoggerFactory.getLogger(GenerateRedisTemplateOri.class);
 
 	private int database;
 
@@ -62,77 +56,53 @@ public class GenerateRedisTemplate */
 
 	private String password;
 
-	*/
-/**
-	 * 本地数据源 redis template
-	 *
-	 * @return
-	 *//*
+	LettuceConnectionFactory lettuceConnectionFactory(GenericObjectPoolConfig genericObjectPoolConfig) {
+		// 单机版配置
+		RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
+		redisStandaloneConfiguration.setDatabase(database);
+		redisStandaloneConfiguration.setHostName(hostName);
+		redisStandaloneConfiguration.setPort(port);
+		redisStandaloneConfiguration.setPassword(RedisPassword.of(password));
 
-	public RedisTemplate generateBatchIdRedisTemplate() {
-		*/
-/* ========= 基本配置 ========= *//*
 
-		RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration();
-		configuration.setHostName(hostName);
-		configuration.setPort(port);
-		configuration.setDatabase(database);
-		if (!ObjectUtils.isEmpty(password)) {
-			RedisPassword redisPassword = RedisPassword.of(password);
-			configuration.setPassword(redisPassword);
-			logger.info("======您当前监控monitoring组件所使用redis配置=【ip:{}】【port:{}】【password:{}】【database:{}】======",hostName,port,password,database);
-		}
+		LettuceClientConfiguration clientConfig = LettucePoolingClientConfiguration.builder()
+				.commandTimeout(Duration.ofMillis(timeout))
+				.poolConfig(genericObjectPoolConfig)
+				.build();
 
-		*/
-/* ========= 连接池通用配置 ========= *//*
-
-		GenericObjectPoolConfig genericObjectPoolConfig = new GenericObjectPoolConfig();
-		genericObjectPoolConfig.setMaxTotal(maxActive);
-		genericObjectPoolConfig.setMinIdle(minIdle);
-		genericObjectPoolConfig.setMaxIdle(maxIdle);
-		genericObjectPoolConfig.setMaxWaitMillis(maxWait);
-
-		*/
-/* ========= lettuce pool ========= *//*
-
-		LettucePoolingClientConfiguration.LettucePoolingClientConfigurationBuilder builder = LettucePoolingClientConfiguration.builder();
-		builder.poolConfig(genericObjectPoolConfig);
-		builder.commandTimeout(Duration.ofSeconds(timeout));
-		LettuceConnectionFactory connectionFactory = new LettuceConnectionFactory(configuration, builder.build());
-		connectionFactory.afterPropertiesSet();
-
-		*/
-/* ========= 创建 template ========= *//*
-
-		return createRedisTemplate(connectionFactory);
+		LettuceConnectionFactory factory = new LettuceConnectionFactory(redisStandaloneConfiguration,clientConfig);
+		return factory;
 	}
 
-	*/
-/**
+	public GenericObjectPoolConfig genericObjectPoolConfig() {
+		GenericObjectPoolConfig genericObjectPoolConfig = new GenericObjectPoolConfig();
+		genericObjectPoolConfig.setMaxIdle(maxIdle);
+		genericObjectPoolConfig.setMinIdle(minIdle);
+		genericObjectPoolConfig.setMaxTotal(maxActive);
+		genericObjectPoolConfig.setMaxWaitMillis(maxWait);
+		return genericObjectPoolConfig;
+	}
+	/**
 	 * 默认配置 redis template
 	 *
 	 * @param redisConnectionFactory
 	 * @return
-	 *//*
-
-	*/
-/*@Bean
+	 */
+	/*@Bean
 	public RedisTemplate redisTemplate(LettuceConnectionFactory redisConnectionFactory) {
 		return createRedisTemplate(redisConnectionFactory);
-	}*//*
+	}*/
 
-
-	*/
-/**
+	/**
 	 * json 实现 redisTemplate
 	 * <p>
 	 * 该方法不能加 @Bean 否则不管如何调用，connectionFactory都会是默认配置
 	 *
 	 * @param redisConnectionFactory
 	 * @return
-	 *//*
-
+	 */
 	@SuppressWarnings("all")
+	@Bean
 	public RedisTemplate createRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
 		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
 		// 配置连接工厂
@@ -157,4 +127,3 @@ public class GenerateRedisTemplate */
 	}
 
 }
-*/
