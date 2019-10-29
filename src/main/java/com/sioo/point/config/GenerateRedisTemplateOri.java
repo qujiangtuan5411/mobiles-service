@@ -20,6 +20,7 @@ import org.springframework.data.redis.connection.lettuce.LettucePoolingClientCon
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.util.ObjectUtils;
 
 import java.time.Duration;
 
@@ -63,7 +64,11 @@ public class GenerateRedisTemplateOri extends CachingConfigurerSupport {
 		redisStandaloneConfiguration.setDatabase(database);
 		redisStandaloneConfiguration.setHostName(hostName);
 		redisStandaloneConfiguration.setPort(port);
-		redisStandaloneConfiguration.setPassword(RedisPassword.of(password));
+		if (!ObjectUtils.isEmpty(password)) {
+			RedisPassword redisPassword = RedisPassword.of(password);
+			redisStandaloneConfiguration.setPassword(redisPassword);
+			logger.info("======您当前监控monitoring组件所使用redis配置=【ip:{}】【port:{}】【password:{}】【database:{}】======",hostName,port,password,database);
+		}
 
 
 		LettuceClientConfiguration clientConfig = LettucePoolingClientConfiguration.builder()
@@ -89,10 +94,10 @@ public class GenerateRedisTemplateOri extends CachingConfigurerSupport {
 	 * @param redisConnectionFactory
 	 * @return
 	 */
-	@Bean
+	/*@Bean
 	public RedisTemplate redisTemplate(LettuceConnectionFactory redisConnectionFactory) {
 		return createRedisTemplate(redisConnectionFactory);
-	}
+	}*/
 
 	/**
 	 * json 实现 redisTemplate
@@ -103,6 +108,7 @@ public class GenerateRedisTemplateOri extends CachingConfigurerSupport {
 	 * @return
 	 */
 	@SuppressWarnings("all")
+	@Bean
 	public RedisTemplate createRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
 		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
 		// 配置连接工厂

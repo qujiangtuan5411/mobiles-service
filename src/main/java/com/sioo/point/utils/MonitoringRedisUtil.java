@@ -25,10 +25,6 @@ public class MonitoringRedisUtil {
     @Autowired
     private RedisTemplate redisTemplate;
 
-    /*public MonitoringRedisUtil(@Autowired redisTemplate redisTemplate) {
-        this.redisTemplate = redisTemplate.redisTemplate();
-    }*/
-
     /**
     * @Description: 指定缓存失效时间
     * @param key 键
