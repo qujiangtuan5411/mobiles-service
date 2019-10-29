@@ -32,9 +32,19 @@ public class RedisAutoConfiguration {
     @Autowired
     private PointRedisProperties pointRedisProperties;
 
+    /**
+     * 注入属性
+     */
     @Autowired
     private SlaveRedisProperties slaveRedisProperties;
 
+    /**
+    * @Description: 创建默认的pool
+    * @Param:
+    * @return:
+    * @Author: fanghuaiming
+    * @Date: 5:43 PM 2019/10/29
+    */
     @Bean
     @Order(1)
     @ConditionalOnMissingBean(GenerateRedisTemplateOri.class)
@@ -47,6 +57,13 @@ public class RedisAutoConfiguration {
         return redisConfig.genericObjectPoolConfig();
     }
 
+    /**
+    * @Description: 创建默认的connectionFactory
+    * @Param:
+    * @return:
+    * @Author: fanghuaiming
+    * @Date: 5:44 PM 2019/10/29
+    */
     @Bean
     @Order(2)
     @ConditionalOnMissingBean(GenerateRedisTemplateOri.class)
@@ -60,6 +77,13 @@ public class RedisAutoConfiguration {
         return redisConfig.lettuceConnectionFactory(genericObjectPoolConfig);
     }
 
+    /**
+    * @Description: 创建一个新的slaveRedisTemplate
+    * @Param:
+    * @return:
+    * @Author: fanghuaiming
+    * @Date: 5:44 PM 2019/10/29
+    */
     @Bean
     @Order(2)
     @ConditionalOnMissingBean(GenerateRedisTemplateOri.class)

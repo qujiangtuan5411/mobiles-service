@@ -58,6 +58,13 @@ public class GenerateRedisTemplateOri extends CachingConfigurerSupport {
 
 	private String password;
 
+	/**
+	* @Description: 创建connectionFactory
+	* @Param:
+	* @return:
+	* @Author: fanghuaiming
+	* @Date: 5:45 PM 2019/10/29
+	*/
 	LettuceConnectionFactory lettuceConnectionFactory(GenericObjectPoolConfig genericObjectPoolConfig) {
 		// 单机版配置
 		RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
@@ -80,6 +87,13 @@ public class GenerateRedisTemplateOri extends CachingConfigurerSupport {
 		return factory;
 	}
 
+	/**
+	* @Description: 创建pool
+	* @Param:
+	* @return:
+	* @Author: fanghuaiming
+	* @Date: 5:46 PM 2019/10/29
+	*/
 	public GenericObjectPoolConfig genericObjectPoolConfig() {
 		GenericObjectPoolConfig genericObjectPoolConfig = new GenericObjectPoolConfig();
 		genericObjectPoolConfig.setMaxIdle(maxIdle);
