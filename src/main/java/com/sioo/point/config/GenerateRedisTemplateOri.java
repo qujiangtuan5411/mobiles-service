@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -31,7 +32,7 @@ import java.time.Duration;
 @Getter
 @Setter
 @Order(2)
-public class GenerateRedisTemplateOri /*extends CachingConfigurerSupport */{
+public class GenerateRedisTemplateOri extends CachingConfigurerSupport {
 
 	/**
 	 * 日志对象
@@ -88,10 +89,10 @@ public class GenerateRedisTemplateOri /*extends CachingConfigurerSupport */{
 	 * @param redisConnectionFactory
 	 * @return
 	 */
-	/*@Bean
+	@Bean
 	public RedisTemplate redisTemplate(LettuceConnectionFactory redisConnectionFactory) {
 		return createRedisTemplate(redisConnectionFactory);
-	}*/
+	}
 
 	/**
 	 * json 实现 redisTemplate
@@ -102,7 +103,6 @@ public class GenerateRedisTemplateOri /*extends CachingConfigurerSupport */{
 	 * @return
 	 */
 	@SuppressWarnings("all")
-	@Bean
 	public RedisTemplate createRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
 		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
 		// 配置连接工厂
