@@ -25,9 +25,6 @@ public class MonitoringRedisUtil {
     @Autowired
     private RedisTemplate redisTemplate;
 
-    /*@Autowired
-    private RedisTemplate slaveRedisTemplate;*/
-
     /**
     * @Description: 指定缓存失效时间
     * @param key 键
@@ -720,7 +717,6 @@ public class MonitoringRedisUtil {
      */
     @Bean
     public HashOperations<String, String, Object> hashOperations() {
-//        slaveRedisTemplate.opsForValue().set("slave","slave",10,TimeUnit.SECONDS);
         return redisTemplate.opsForHash();
     }
 

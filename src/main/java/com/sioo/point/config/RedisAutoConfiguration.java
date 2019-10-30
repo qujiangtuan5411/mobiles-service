@@ -7,11 +7,13 @@ import com.sioo.point.properties.PointRedisProperties;
 import com.sioo.point.properties.SlaveRedisProperties;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
@@ -54,13 +56,12 @@ public class RedisAutoConfiguration {
     @Bean
     @Order(1)
     @ConditionalOnMissingBean(GenerateRedisTemplateOri.class)
+    @Primary
     public GenericObjectPoolConfig genericObjectPoolConfig() {
-        GenerateRedisTemplateOri redisConfig = new GenerateRedisTemplateOri();
-        redisConfig.setMaxIdle(pointRedisProperties.getMaxIdle());
-        redisConfig.setMinIdle(pointRedisProperties.getMinIdle());
-        redisConfig.setMaxActive(pointRedisProperties.getMaxActive());
-        redisConfig.setMaxWait(pointRedisProperties.getMaxWait());
-        return redisConfig.genericObjectPoolConfig();
+        return getGenericObjectPoolConfig(pointRedisProperties.getMaxIdle(),
+                pointRedisProperties.getMinIdle(),
+                pointRedisProperties.getMaxActive(),
+                pointRedisProperties.getMaxWait());
     }
 
     /**
@@ -73,18 +74,25 @@ public class RedisAutoConfiguration {
     @Bean
     @Order(2)
     @ConditionalOnMissingBean(GenerateRedisTemplateOri.class)
+    @Primary
     public LettuceConnectionFactory lettuceConnectionFactory(GenericObjectPoolConfig genericObjectPoolConfig) {
-        GenerateRedisTemplateOri redisConfig = new GenerateRedisTemplateOri();
-        redisConfig.setDatabase(pointRedisProperties.getDatabase());
-        redisConfig.setHostName(pointRedisProperties.getHostName());
-        redisConfig.setPassword(pointRedisProperties.getPassword());
-        redisConfig.setPort(pointRedisProperties.getPort());
-        redisConfig.setTimeout(pointRedisProperties.getTimeout());
-        return redisConfig.lettuceConnectionFactory(genericObjectPoolConfig);
+        return getLettuceConnectionFactory(genericObjectPoolConfig,
+                pointRedisProperties.getDatabase(),
+                pointRedisProperties.getHostName(),
+                pointRedisProperties.getPassword(),
+                pointRedisProperties.getPort(),
+                pointRedisProperties.getTimeout());
     }
 
+    /**
+    * @Description: 替换默认的redisTemplate
+    * @Param:
+    * @return:
+    * @Author: fanghuaiming
+    * @Date: 8:59 PM 2019/10/30
+    */
     @Bean
-    @Order(3)
+    @Order(4)
     @ConditionalOnMissingBean(RedisTemplate.class)
     public RedisTemplate redisTemplate(LettuceConnectionFactory lettuceConnectionFactory){
         RedisTemplate redisTemplate = createRedisTemplate(lettuceConnectionFactory);
@@ -92,29 +100,94 @@ public class RedisAutoConfiguration {
     }
 
     /**
-    * @Description: 创建一个新的slaveRedisTemplate
-    * @Param:
-    * @return:
-    * @Author: fanghuaiming
-    * @Date: 5:44 PM 2019/10/29
-    */
+     * @Description: 创建第二个slave pool
+     * @Param:
+     * @return:
+     * @Author: fanghuaiming
+     * @Date: 8:57 PM 2019/10/30
+     */
+    @Bean
+    @Order(1)
+    @ConditionalOnMissingBean(GenerateRedisTemplateOri.class)
+    public GenericObjectPoolConfig slaveGenericObjectPoolConfig() {
+        return getGenericObjectPoolConfig(slaveRedisProperties.getMaxIdle(),
+                slaveRedisProperties.getMinIdle(),
+                slaveRedisProperties.getMaxActive(),
+                slaveRedisProperties.getMaxWait());
+    }
+
+    /**
+     * @Description: 创建第二个slave的connectoryFactory
+     * @Param:
+     * @return:
+     * @Author: fanghuaiming
+     * @Date: 8:58 PM 2019/10/30
+     */
     @Bean
     @Order(2)
     @ConditionalOnMissingBean(GenerateRedisTemplateOri.class)
-    public RedisTemplate slaveRedisTemplate() {
+    public LettuceConnectionFactory slaveLettuceConnectionFactory(@Qualifier("slaveGenericObjectPoolConfig") GenericObjectPoolConfig slaveGenericObjectPoolConfig) {
+        return getLettuceConnectionFactory(slaveGenericObjectPoolConfig,
+                slaveRedisProperties.getDatabase(),
+                slaveRedisProperties.getHostName(),
+                slaveRedisProperties.getPassword(),
+                slaveRedisProperties.getPort(),
+                slaveRedisProperties.getTimeout());
+    }
+
+    /**
+     * @Description: 创建一个新的slaveRedisTemplate
+     * @Param:
+     * @return:
+     * @Author: fanghuaiming
+     * @Date: 5:44 PM 2019/10/29
+     */
+    @Bean
+    @Order(4)
+    @ConditionalOnMissingBean(GenerateRedisTemplateOri.class)
+    public RedisTemplate slaveRedisTemplate(@Qualifier("slaveLettuceConnectionFactory") LettuceConnectionFactory slaveLettuceConnectionFactory) {
+        return createRedisTemplate(slaveLettuceConnectionFactory);
+    }
+
+    /**
+     * @Description: 抽象公用方法
+     * @Param:
+     * @return:
+     * @Author: fanghuaiming
+     * @Date: 8:57 PM 2019/10/30
+     */
+    private GenericObjectPoolConfig getGenericObjectPoolConfig(int maxIdle,
+                                                               int minIdle,
+                                                               int maxActive,
+                                                               int maxWait) {
         GenerateRedisTemplateOri redisConfig = new GenerateRedisTemplateOri();
-        redisConfig.setMaxIdle(slaveRedisProperties.getMaxIdle());
-        redisConfig.setMinIdle(slaveRedisProperties.getMinIdle());
-        redisConfig.setMaxActive(slaveRedisProperties.getMaxActive());
-        redisConfig.setMaxWait(slaveRedisProperties.getMaxWait());
-        GenericObjectPoolConfig genericObjectPoolConfig = redisConfig.genericObjectPoolConfig();
-        redisConfig.setDatabase(slaveRedisProperties.getDatabase());
-        redisConfig.setHostName(slaveRedisProperties.getHostName());
-        redisConfig.setPassword(slaveRedisProperties.getPassword());
-        redisConfig.setPort(slaveRedisProperties.getPort());
-        redisConfig.setTimeout(slaveRedisProperties.getTimeout());
-        LettuceConnectionFactory lettuceConnectionFactory = redisConfig.lettuceConnectionFactory(genericObjectPoolConfig);
-        return createRedisTemplate(lettuceConnectionFactory);
+        redisConfig.setMaxIdle(maxIdle);
+        redisConfig.setMinIdle(minIdle);
+        redisConfig.setMaxActive(maxActive);
+        redisConfig.setMaxWait(maxWait);
+        return redisConfig.genericObjectPoolConfig();
+    }
+
+    /**
+     * @Description: 抽象公用connextionFactory
+     * @Param:
+     * @return:
+     * @Author: fanghuaiming
+     * @Date: 8:58 PM 2019/10/30
+     */
+    private LettuceConnectionFactory getLettuceConnectionFactory(GenericObjectPoolConfig genericObjectPoolConfig,
+                                                                 int database,
+                                                                 String hostName,
+                                                                 String password,
+                                                                 int port,
+                                                                 long timeout) {
+        GenerateRedisTemplateOri redisConfig = new GenerateRedisTemplateOri();
+        redisConfig.setDatabase(database);
+        redisConfig.setHostName(hostName);
+        redisConfig.setPassword(password);
+        redisConfig.setPort(port);
+        redisConfig.setTimeout(timeout);
+        return redisConfig.lettuceConnectionFactory(genericObjectPoolConfig);
     }
 
     /**

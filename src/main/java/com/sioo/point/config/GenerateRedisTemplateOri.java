@@ -5,7 +5,6 @@ import lombok.Setter;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.connection.RedisPassword;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
@@ -25,7 +24,7 @@ import java.time.Duration;
 @Getter
 @Setter
 @Order(2)
-public class GenerateRedisTemplateOri extends CachingConfigurerSupport {
+public class GenerateRedisTemplateOri /*extends CachingConfigurerSupport*/ {
 
 	/**
 	 * 日志对象
@@ -94,15 +93,5 @@ public class GenerateRedisTemplateOri extends CachingConfigurerSupport {
 		genericObjectPoolConfig.setMaxWaitMillis(maxWait);
 		return genericObjectPoolConfig;
 	}
-	/**
-	 * 默认配置 redis template
-	 *
-	 * @param redisConnectionFactory
-	 * @return
-	 */
-	/*@Bean
-	public RedisTemplate redisTemplate(LettuceConnectionFactory redisConnectionFactory) {
-		return createRedisTemplate(redisConnectionFactory);
-	}*/
 
 }
