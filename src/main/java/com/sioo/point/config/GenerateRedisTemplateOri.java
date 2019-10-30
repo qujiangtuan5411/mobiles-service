@@ -121,8 +121,6 @@ public class GenerateRedisTemplateOri extends CachingConfigurerSupport {
 	 * @param redisConnectionFactory
 	 * @return
 	 */
-	@SuppressWarnings("all")
-	@Bean
 	public RedisTemplate createRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
 		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
 		// 配置连接工厂
