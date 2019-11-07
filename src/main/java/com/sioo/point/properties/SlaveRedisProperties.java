@@ -16,13 +16,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "com.sioo.slave.redis")
 public class SlaveRedisProperties {
 
-    private static final int DEFAULT_DATABASE =0 ;
+    private static final int DEFAULT_DATABASE =16 ;
     private static final long DEFAULT_TIMEOUT= 5000;
     private static final int DEFAULT_MAXACTIVE = 8;
     private static final  int DEFAULT_MAXWAIT =-1;
     private static final  int DEFAULT_MAXIDLE = 13;
     private static final  int DEFAULT_MINIDLE = 5;
-    private static final  String DEFAULT_HOSTNAME = "172.19.98.63";
+    private static final  String DEFAULT_HOSTNAME = "172.19.84.241";
     private static final  int DEFAULT_PORT = 6379;
     private static final  String DEFAULT_PASSWORD = "SIOO123!@#";
 
