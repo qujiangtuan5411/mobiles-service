@@ -111,21 +111,23 @@ public class JvmMonitorAspect {
                     freeMemory + "M", totalMemory + "M",
                     maxMemory + "M", actualAvailableMemory + "M",
                     critical1, memmoryPercent, judgeValue);
-            try {
-                jvmWechatReboot.sendJvmMarkdownMessage("JVM性能监控报警信息!!!",
-                        freeMemory,
-                        totalMemory,
-                        maxMemory,
-                        actualAvailableMemory,
-                        critical1,
-                        memmoryPercent,
-                        judgeValue,
-                        signatureName,
-                        declaringTypeName
-                        );
-            } catch (IOException e) {
-                e.printStackTrace();
-                logger.debug("机器人JVM监控报警出现异常,请检查!!!");
+            if(judgeValue){
+                try {
+                    jvmWechatReboot.sendJvmMarkdownMessage("JVM性能监控报警信息!!!",
+                            freeMemory,
+                            totalMemory,
+                            maxMemory,
+                            actualAvailableMemory,
+                            critical1,
+                            memmoryPercent,
+                            judgeValue,
+                            signatureName,
+                            declaringTypeName
+                    );
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    logger.debug("机器人JVM监控报警出现异常,请检查!!!");
+                }
             }
         }
     }
