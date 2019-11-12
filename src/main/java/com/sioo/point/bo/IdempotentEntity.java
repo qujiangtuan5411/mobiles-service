@@ -17,7 +17,7 @@ import lombok.*;
 @NoArgsConstructor
 public class IdempotentEntity {
 
-    private Integer templateId;
+    private Integer channelTemplateId;
     private String messageName;
     private String mobiles;
 
