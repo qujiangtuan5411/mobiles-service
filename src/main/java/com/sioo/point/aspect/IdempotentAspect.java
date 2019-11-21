@@ -69,14 +69,14 @@ public class IdempotentAspect {
             String idempotent = JsonUtil.toJsonString(object);
             JSONObject jsonObject = JSON.parseObject(idempotent);
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append(jsonObject.getInteger("channelTemplateId").toString())
+            stringBuilder.append(jsonObject.getInteger("userTemplateId").toString())
                     .append(jsonObject.getString("messageName"))
                     .append(jsonObject.getString("mobiles"));
             String idempotentKey = MD5Utils.toMD5(stringBuilder.toString());
-            long incr = monitoringRedisUtil.incr(jsonObject.getInteger("channelTemplateId").toString()+"_"+idempotentKey, 1);
+            long incr = monitoringRedisUtil.incr(jsonObject.getInteger("userTemplateId").toString()+"_"+idempotentKey, 1);
             // 如果该key不存在，则从0开始计算，并且当incr为1的时候，设置过期时间,过期时间为秒单位
             if (incr == 1) {
-                monitoringRedisUtil.expire(jsonObject.getInteger("channelTemplateId").toString()+"_"+idempotentKey, expire);
+                monitoringRedisUtil.expire(jsonObject.getInteger("userTemplateId").toString()+"_"+idempotentKey, expire);
             }
             if(incr > 1){
                 throw new Exception("idempotentException");
