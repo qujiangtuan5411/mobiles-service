@@ -91,8 +91,8 @@ public class ExceptionLogAspect {
             log.setMethod(
                     (joinPoint.getTarget().getClass().getName() + "." + joinPoint.getSignature().getName() + "()"));
             log.setCreateDate(DateUtil.DateToString(new Date(), DateStyle.YYYY_MM_DD_HH_MM_SS_CN));
-            logger.error("异常描述:{}; 时间:{}; 异常方法:{}; 异常信息摘要:{}; 异常具体提示信息:{}", log.getDescription(), log.getCreateDate(),
-                    log.getRequestIp(), log.getMethod(), e.getMessage(), e);
+            logger.error("异常描述:{}; 时间:{}; 异常方法:{};  异常具体提示信息:{}", log.getDescription(), log.getCreateDate(),
+                    log.getMethod(), e.getMessage(), e);
         }
         catch (Exception ex) {
             //记录本地异常日志
