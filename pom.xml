@@ -225,6 +225,6 @@
 		<springboot.version>1.5.4.RELEASE</springboot.version>
 		<commons-codec.version>1.10</commons-codec.version>
 		<commons-pool2.version>2.6.0</commons-pool2.version>
-		<jackson-databind.version>2.9.5</jackson-databind.version>
+		<jackson-databind.version>2.13.4.1</jackson-databind.version>
 	</properties>
 </project>
